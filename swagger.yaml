@@ -1,0 +1,43 @@
+swagger: "2.0"
+info:
+    title: test Title
+    description: Teqnological asia api
+    termsOfService: Golang team
+    contact:
+        email: contact@teqnological.asia
+    license:
+        name: Copy right @ 2023 teqnological
+    version: 1.1.1
+schemes:
+    - http
+    - https
+consumes:
+    - application/json
+host: localhost
+basePath: /api
+paths:
+    /user/login:
+        post:
+            summary: login
+            description: login to server
+            tags:
+                - Account
+            operationId: Login
+            parameters:
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/LoginRequest'
+            responses:
+                "200":
+                    description: OK
+                    schema:
+                        $ref: '#/definitions/LoginResponse'
+definitions:
+    LoginRequest:
+        type: object
+        default: '{"username": "", "password": ""}'
+    LoginResponse:
+        type: object
+        default: '{"access_token": "abc", "refresh_token": "abc"}'
