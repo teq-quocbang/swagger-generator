@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 
@@ -26,6 +28,19 @@ func main() {
 
 	// paths
 	paths.SetUpPaths(t)
+
+	data, err := os.ReadFile("api.json")
+	if err != nil {
+		log.Fatalf("failed to read api file, error: %v", err)
+	}
+	var apis APIS
+	if err := json.Unmarshal(data, &apis); err != nil {
+		log.Fatalf("failed to unmarshal json, error: %v", err)
+	}
+
+	for apiURL, api := range apis {
+		fmt.Println(apiURL, api)
+	}
 
 	swaggerByte, err := yaml.Marshal(&t)
 	if err != nil {

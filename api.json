@@ -9,7 +9,7 @@
         ],
         "response": [
             {
-                "raw": "[{'access_token': '', 'refresh_token': '', 'age': 0}]"
+                "raw": "{[{'access_token': '', 'refresh_token': '', 'age': 0}]}"
             }
         ]
     }
