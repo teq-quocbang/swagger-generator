@@ -1,0 +1,16 @@
+{
+    "/api/user/login": {
+        "method": "post",
+        "request": [
+            {
+                "in": "body",
+                "raw": "{'username': '', 'password': ''}"
+            }
+        ],
+        "response": [
+            {
+                "raw": "[{'access_token': '', 'refresh_token': '', 'age': 0}]"
+            }
+        ]
+    }
+}

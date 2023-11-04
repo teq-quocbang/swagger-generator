@@ -16,6 +16,40 @@ consumes:
 host: localhost
 basePath: /api
 paths:
+    /user/info/{id}:
+        get:
+            summary: get user info
+            description: get user
+            tags:
+                - Account
+            operationId: ListUserInfo
+            parameters:
+                - in: path
+                  name: id
+                  type: string
+                  required: true
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                    properties:
+                        Data:
+                            type: object
+            responses:
+                "200":
+                    description: OK
+                    schema:
+                        properties:
+                            Data:
+                                type: array
+                                items:
+                                    properties:
+                                        Age:
+                                            type: integer
+                                            description: user age
+                                        Username:
+                                            type: string
+                                            description: name of the user
     /user/login:
         post:
             summary: login
