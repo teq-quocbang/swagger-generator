@@ -9,6 +9,8 @@
         "request": [
             {
                 "in": "body",
+                "name": "body",
+                "description": "",
                 "required": true,
                 "schema": {
               	    "username": "test",
@@ -56,6 +58,85 @@
                 "data": {
                     "Code": 10010,
                     "Details": "missing id"
+                }
+           }
+        ]
+    },
+    "/api/user/{userID}/info": {
+        "method": "get",
+        "operation_id": "GetUserInfo",
+        "summary": "get user information",
+        "tag": [
+            "Account"
+        ],
+        "request": [
+            {
+                "in": "path",
+                "name": "userID",
+                "type": "string",
+                "description": "user id",
+                "required": true
+            }
+        ],
+        "response": [
+            {
+                "code":    200,
+                "message": "OK",
+                "data": {
+                    "username": "quocbang",
+                    "age": "23",
+                    "is_handsome": false
+                }
+           },
+           {
+                "code":    400,
+                "message": "Bad Request",
+                "data": {
+                    "Code": 10010,
+                    "Details": "missing username"
+                }
+           }
+        ]
+    },
+    "/api/user/{userID}/upload": {
+        "method": "post",
+        "operation_id": "UploadUserImage",
+        "summary": "upload user images",
+        "tag": [
+            "Account"
+        ],
+        "request": [
+            {
+                "in": "path",
+                "name": "userID",
+                "description": "user id",
+                "type": "string",
+                "required": true
+            },
+            {
+                "in": "formData",
+                "name": "file",
+                "type": "file",
+                "description": "file to upload",
+                "required": false
+            }
+        ],
+        "response": [
+            {
+                "code":    200,
+                "message": "OK",
+                "data": {
+                    "username": "quocbang",
+                    "age": "23",
+                    "is_handsome": false
+                }
+           },
+           {
+                "code":    400,
+                "message": "Bad Request",
+                "data": {
+                    "Code": 10010,
+                    "Details": "missing username"
                 }
            }
         ]

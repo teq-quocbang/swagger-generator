@@ -16,6 +16,81 @@ consumes:
 host: localhost
 basePath: /api
 paths:
+    /api/user/{userID}/info:
+        get:
+            summary: get user information
+            tags:
+                - Account
+            operationId: GetUserInfo
+            parameters:
+                - in: path
+                  name: userID
+                  type: string
+                  required: true
+            responses:
+                "200":
+                    description: OK
+                    schema:
+                        type: object
+                        properties:
+                            age:
+                                type: string
+                                example: "23"
+                            is_handsome:
+                                example: false
+                            username:
+                                type: string
+                                example: quocbang
+                "400":
+                    description: Bad Request
+                    schema:
+                        type: object
+                        properties:
+                            Code:
+                                type: integer
+                                example: 10010
+                            Details:
+                                type: string
+                                example: missing username
+    /api/user/{userID}/upload:
+        post:
+            summary: upload user images
+            tags:
+                - Account
+            operationId: UploadUserImage
+            parameters:
+                - in: path
+                  name: userID
+                  type: string
+                  required: true
+                - in: formData
+                  name: file
+                  type: file
+            responses:
+                "200":
+                    description: OK
+                    schema:
+                        type: object
+                        properties:
+                            age:
+                                type: string
+                                example: "23"
+                            is_handsome:
+                                example: false
+                            username:
+                                type: string
+                                example: quocbang
+                "400":
+                    description: Bad Request
+                    schema:
+                        type: object
+                        properties:
+                            Code:
+                                type: integer
+                                example: 10010
+                            Details:
+                                type: string
+                                example: missing username
     /api/user/login:
         post:
             summary: login to server

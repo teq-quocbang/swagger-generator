@@ -3,9 +3,12 @@ package models
 type Paths map[string]Path
 
 type Request struct {
-	In       string      `json:"in"`
-	Required bool        `json:"required"`
-	Schema   interface{} `json:"schema"`
+	In          string      `json:"in"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Required    bool        `json:"required"`
+	Type        string      `json:"type"`
+	Schema      interface{} `json:"schema"`
 }
 
 type Response struct {

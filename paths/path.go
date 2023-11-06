@@ -15,17 +15,27 @@ func SetUpPaths(paths models.Paths) (map[string]*openapi2.PathItem, error) {
 	result := map[string]*openapi2.PathItem{}
 
 	for k, path := range paths {
+		response, err := parseResponseSchema(path.Response)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse response, error: %v", err)
+		}
+		parameter, err := parseParameterSchema(path.Request)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse parameter, error: %v", err)
+		}
+
 		switch path.Method {
 		case "get": // get
+			result[k] = &openapi2.PathItem{
+				Get: &openapi2.Operation{
+					OperationID: path.OperationID,
+					Summary:     path.Summary,
+					Tags:        path.Tag,
+					Parameters:  *parameter,
+					Responses:   response,
+				},
+			}
 		case "post": // post
-			response, err := parseResponseSchema(path.Response)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse response, error: %v", err)
-			}
-			parameter, err := parseParameterSchema(path.Request)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse parameter, error: %v", err)
-			}
 			result[k] = &openapi2.PathItem{
 				Post: &openapi2.Operation{
 					OperationID: path.OperationID,
@@ -36,8 +46,35 @@ func SetUpPaths(paths models.Paths) (map[string]*openapi2.PathItem, error) {
 				},
 			}
 		case "put": // put
+			result[k] = &openapi2.PathItem{
+				Put: &openapi2.Operation{
+					OperationID: path.OperationID,
+					Summary:     path.Summary,
+					Tags:        path.Tag,
+					Parameters:  *parameter,
+					Responses:   response,
+				},
+			}
 		case "patch": // patch
+			result[k] = &openapi2.PathItem{
+				Patch: &openapi2.Operation{
+					OperationID: path.OperationID,
+					Summary:     path.Summary,
+					Tags:        path.Tag,
+					Parameters:  *parameter,
+					Responses:   response,
+				},
+			}
 		case "delete": // delete
+			result[k] = &openapi2.PathItem{
+				Delete: &openapi2.Operation{
+					OperationID: path.OperationID,
+					Summary:     path.Summary,
+					Tags:        path.Tag,
+					Parameters:  *parameter,
+					Responses:   response,
+				},
+			}
 		default:
 			return nil, fmt.Errorf("unexpected method, your method is: %s", path.Method)
 		}
@@ -50,7 +87,6 @@ func parseResponseSchema(response []models.Response) (map[string]*openapi2.Respo
 	for _, r := range response {
 		strCode := fmt.Sprintf("%d", r.Code)
 		result[strCode] = &openapi2.Response{
-			Extensions:  nil,
 			Description: r.Message,
 			Schema: &openapi3.SchemaRef{
 				Value: parseSchema(r.Data),
@@ -65,15 +101,18 @@ func parseParameterSchema(request []models.Request) (*openapi2.Parameters, error
 	result := make(openapi2.Parameters, len(request))
 
 	for i, r := range request {
-		result[i] = &openapi2.Parameter{
-			Extensions: nil,
-			In:         r.In,
-			Name:       r.In,
-			Required:   r.Required,
-			Schema: &openapi3.SchemaRef{
-				Value: parseSchema(r.Schema),
-			},
+		parameter := &openapi2.Parameter{
+			In:       r.In,
+			Name:     r.Name,
+			Required: r.Required,
+			Type:     r.Type,
 		}
+		if r.In == "body" {
+			parameter.Schema = &openapi3.SchemaRef{
+				Value: parseSchema(r.Schema),
+			}
+		}
+		result[i] = parameter
 	}
 
 	return &result, nil
