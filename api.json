@@ -1,16 +1,63 @@
 {
     "/api/user/login": {
         "method": "post",
+        "operation_id": "Login",
+        "summary": "login to server",
+        "tag": [
+            "Account"
+        ],
         "request": [
             {
                 "in": "body",
-                "raw": "{'username': '', 'password': ''}"
-            }
+                "required": true,
+                "schema": {
+              	    "username": "test",
+                    "password": "test",
+                    "user_info": {
+                        "full_name": "thong quoc bang",
+                        "age": 23,
+                        "position": [1, 2, 3, 4, 5] 
+                    },
+                    "permission": [
+                        "abc",
+                        "djsgdj",
+                        "skdhdkh"
+                    ],
+                    "tests": [
+                        {
+                            "username": "test 1",
+                            "password": "test password 1"
+                        },
+                        {
+                            "username": "test 2",
+                            "password": "test password 2"
+                        }
+                    ]
+
+                }
+              }
         ],
         "response": [
             {
-                "raw": "{[{'access_token': '', 'refresh_token': '', 'age': 0}]}"
-            }
+                "code":    200,
+                "message": "OK",
+                "data": {
+                    "id": 0,
+                    "created_at": "string",
+                    "created_by": 0,
+                    "name": "string",
+                    "updated_at": "string",
+                    "updated_by": 0
+                }
+           },
+           {
+                "code":    400,
+                "message": "Bad Request",
+                "data": {
+                    "Code": 10010,
+                    "Details": "missing id"
+                }
+           }
         ]
     }
 }

@@ -2,16 +2,16 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/getkin/kin-openapi/openapi2"
-	"github.com/teq-quocbang/swagger-generator/definitions"
 	"github.com/teq-quocbang/swagger-generator/info"
+	"github.com/teq-quocbang/swagger-generator/models"
 	"github.com/teq-quocbang/swagger-generator/options"
 	"github.com/teq-quocbang/swagger-generator/paths"
-	"gopkg.in/yaml.v3"
 )
 
 func main() {
@@ -24,23 +24,24 @@ func main() {
 	options.SetupOptions(t)
 
 	// definitions
-	definitions.SetUpDefinitions(t)
+	// definitions.SetUpDefinitions(t)
 
 	// paths
-	paths.SetUpPaths(t)
-
 	data, err := os.ReadFile("api.json")
 	if err != nil {
 		log.Fatalf("failed to read api file, error: %v", err)
 	}
-	var apis APIS
-	if err := json.Unmarshal(data, &apis); err != nil {
-		log.Fatalf("failed to unmarshal json, error: %v", err)
+
+	var modelPath models.Paths
+	if err := json.Unmarshal(data, &modelPath); err != nil {
+		log.Fatalf("failed to unmarshal paths, error: %v", err)
 	}
 
-	for apiURL, api := range apis {
-		fmt.Println(apiURL, api)
+	path, err := paths.SetUpPaths(modelPath)
+	if err != nil {
+		log.Fatal(err)
 	}
+	t.Paths = path
 
 	swaggerByte, err := yaml.Marshal(&t)
 	if err != nil {

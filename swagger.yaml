@@ -16,44 +16,9 @@ consumes:
 host: localhost
 basePath: /api
 paths:
-    /user/info/{id}:
-        get:
-            summary: get user info
-            description: get user
-            tags:
-                - Account
-            operationId: ListUserInfo
-            parameters:
-                - in: path
-                  name: id
-                  type: string
-                  required: true
-                - in: body
-                  name: body
-                  required: true
-                  schema:
-                    properties:
-                        Data:
-                            type: object
-            responses:
-                "200":
-                    description: OK
-                    schema:
-                        properties:
-                            Data:
-                                type: array
-                                items:
-                                    properties:
-                                        Age:
-                                            type: integer
-                                            description: user age
-                                        Username:
-                                            type: string
-                                            description: name of the user
-    /user/login:
+    /api/user/login:
         post:
-            summary: login
-            description: login to server
+            summary: login to server
             tags:
                 - Account
             operationId: Login
@@ -62,16 +27,84 @@ paths:
                   name: body
                   required: true
                   schema:
-                    $ref: '#/definitions/LoginRequest'
+                    type: object
+                    properties:
+                        password:
+                            type: string
+                            example: test
+                        permission:
+                            type: array
+                            items:
+                                type: string
+                                example:
+                                    - abc
+                                    - djsgdj
+                                    - skdhdkh
+                        tests:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    password:
+                                        type: string
+                                        example: test password 2
+                                    username:
+                                        type: string
+                                        example: test 2
+                        user_info:
+                            type: object
+                            properties:
+                                age:
+                                    type: integer
+                                    example: 23
+                                full_name:
+                                    type: string
+                                    example: thong quoc bang
+                                position:
+                                    type: array
+                                    items:
+                                        type: integer
+                                        example:
+                                            - 1
+                                            - 2
+                                            - 3
+                                            - 4
+                                            - 5
+                        username:
+                            type: string
+                            example: test
             responses:
                 "200":
                     description: OK
                     schema:
-                        $ref: '#/definitions/LoginResponse'
-definitions:
-    LoginRequest:
-        type: object
-        default: '{"username": "", "password": ""}'
-    LoginResponse:
-        type: object
-        default: '{"access_token": "abc", "refresh_token": "abc"}'
+                        type: object
+                        properties:
+                            created_at:
+                                type: string
+                                example: string
+                            created_by:
+                                type: integer
+                                example: 0
+                            id:
+                                type: integer
+                                example: 0
+                            name:
+                                type: string
+                                example: string
+                            updated_at:
+                                type: string
+                                example: string
+                            updated_by:
+                                type: integer
+                                example: 0
+                "400":
+                    description: Bad Request
+                    schema:
+                        type: object
+                        properties:
+                            Code:
+                                type: integer
+                                example: 10010
+                            Details:
+                                type: string
+                                example: missing id
