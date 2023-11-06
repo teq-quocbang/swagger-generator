@@ -37,11 +37,10 @@ func main() {
 		log.Fatalf("failed to unmarshal paths, error: %v", err)
 	}
 
-	path, err := paths.SetUpPaths(modelPath)
+	err = paths.SetUpPaths(modelPath, t)
 	if err != nil {
 		log.Fatal(err)
 	}
-	t.Paths = path
 
 	swaggerByte, err := yaml.Marshal(&t)
 	if err != nil {

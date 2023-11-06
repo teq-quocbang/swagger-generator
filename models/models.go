@@ -8,6 +8,7 @@ type Request struct {
 	Description string      `json:"description"`
 	Required    bool        `json:"required"`
 	Type        string      `json:"type"`
+	IsToModel   bool        `json:"is_to_model"`
 	Schema      interface{} `json:"schema"`
 }
 
@@ -22,6 +23,7 @@ type Path struct {
 	OperationID string     `json:"operation_id"`
 	Summary     string     `json:"summary"`
 	Tag         []string   `json:"tag"`
+	Consumes    []string   `json:"consumes"`
 	Request     []Request  `json:"request"`
 	Response    []Response `json:"response"`
 }

@@ -11,78 +11,75 @@ import (
 )
 
 // more parameter to setup your own paths
-func SetUpPaths(paths models.Paths) (map[string]*openapi2.PathItem, error) {
+func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 	result := map[string]*openapi2.PathItem{}
-
-	for k, path := range paths {
-		response, err := parseResponseSchema(path.Response)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse response, error: %v", err)
-		}
-		parameter, err := parseParameterSchema(path.Request)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse parameter, error: %v", err)
-		}
-
+	for apiPath, path := range paths {
 		switch path.Method {
 		case "get": // get
-			result[k] = &openapi2.PathItem{
+			result[apiPath] = &openapi2.PathItem{
 				Get: &openapi2.Operation{
-					OperationID: path.OperationID,
 					Summary:     path.Summary,
+					Consumes:    path.Consumes,
+					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  *parameter,
-					Responses:   response,
+					Parameters:  parseParameterSchema(path.Request, t),
+					Responses:   parseResponseSchema(path.Response),
 				},
 			}
 		case "post": // post
-			result[k] = &openapi2.PathItem{
+			result[apiPath] = &openapi2.PathItem{
 				Post: &openapi2.Operation{
-					OperationID: path.OperationID,
 					Summary:     path.Summary,
+					Consumes:    path.Consumes,
+					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  *parameter,
-					Responses:   response,
+					Parameters:  parseParameterSchema(path.Request, t),
+					Responses:   parseResponseSchema(path.Response),
 				},
 			}
 		case "put": // put
-			result[k] = &openapi2.PathItem{
+			result[apiPath] = &openapi2.PathItem{
 				Put: &openapi2.Operation{
-					OperationID: path.OperationID,
 					Summary:     path.Summary,
+					Consumes:    path.Consumes,
+					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  *parameter,
-					Responses:   response,
+					Parameters:  parseParameterSchema(path.Request, t),
+					Responses:   parseResponseSchema(path.Response),
 				},
 			}
 		case "patch": // patch
-			result[k] = &openapi2.PathItem{
+			result[apiPath] = &openapi2.PathItem{
 				Patch: &openapi2.Operation{
-					OperationID: path.OperationID,
 					Summary:     path.Summary,
+					Consumes:    path.Consumes,
+					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  *parameter,
-					Responses:   response,
+					Parameters:  parseParameterSchema(path.Request, t),
+					Responses:   parseResponseSchema(path.Response),
 				},
 			}
 		case "delete": // delete
-			result[k] = &openapi2.PathItem{
+			result[apiPath] = &openapi2.PathItem{
 				Delete: &openapi2.Operation{
-					OperationID: path.OperationID,
 					Summary:     path.Summary,
+					Consumes:    path.Consumes,
+					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  *parameter,
-					Responses:   response,
+					Parameters:  parseParameterSchema(path.Request, t),
+					Responses:   parseResponseSchema(path.Response),
 				},
 			}
 		default:
-			return nil, fmt.Errorf("unexpected method, your method is: %s", path.Method)
+			return fmt.Errorf("unexpected method, your method is: %s", path.Method)
 		}
 	}
-	return result, nil
+
+	t.Paths = result
+	return nil
 }
 
-func parseResponseSchema(response []models.Response) (map[string]*openapi2.Response, error) {
+func parseResponseSchema(response []models.Response) map[string]*openapi2.Response {
 	result := map[string]*openapi2.Response{}
 	for _, r := range response {
 		strCode := fmt.Sprintf("%d", r.Code)
@@ -94,10 +91,10 @@ func parseResponseSchema(response []models.Response) (map[string]*openapi2.Respo
 		}
 	}
 
-	return result, nil
+	return result
 }
 
-func parseParameterSchema(request []models.Request) (*openapi2.Parameters, error) {
+func parseParameterSchema(request []models.Request, t *openapi2.T) openapi2.Parameters {
 	result := make(openapi2.Parameters, len(request))
 
 	for i, r := range request {
@@ -108,14 +105,27 @@ func parseParameterSchema(request []models.Request) (*openapi2.Parameters, error
 			Type:     r.Type,
 		}
 		if r.In == "body" {
-			parameter.Schema = &openapi3.SchemaRef{
-				Value: parseSchema(r.Schema),
+			// move schema to definitions
+			if r.IsToModel {
+				definitionKey := fmt.Sprintf("%sRequest", "Login")
+				t.Definitions = map[string]*openapi3.SchemaRef{
+					definitionKey: {
+						Value: parseSchema(r.Schema),
+					},
+				}
+				parameter.Schema = &openapi3.SchemaRef{
+					Ref: fmt.Sprintf("#/definitions/%s", definitionKey),
+				}
+			} else {
+				parameter.Schema = &openapi3.SchemaRef{
+					Value: parseSchema(r.Schema),
+				}
 			}
 		}
 		result[i] = parameter
 	}
 
-	return &result, nil
+	return result
 }
 
 func parseSchema(schema interface{}) *openapi3.Schema {
@@ -177,10 +187,8 @@ func parseSchema(schema interface{}) *openapi3.Schema {
 			// 	 type: "string"
 			// 	 example: "abc"
 			// 	 description: ""
-			fmt.Println(key.String())
 			types := getType(values.Elem().Type())
-			// with map or slice
-			if types == "object" || types == "slice" {
+			if types == "object" || types == "slice" { // with map or slice
 				switch types {
 				case "object": // golang type is map
 					schemas[key.String()] = &openapi3.SchemaRef{
@@ -216,7 +224,6 @@ func parseSchema(schema interface{}) *openapi3.Schema {
 }
 
 func getType(r reflect.Type) string {
-	fmt.Println(r.Kind())
 	switch r.Kind() {
 	case reflect.String:
 		return "string"

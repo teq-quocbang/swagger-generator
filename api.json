@@ -12,6 +12,7 @@
                 "name": "body",
                 "description": "",
                 "required": true,
+                "is_to_model": true,
                 "schema": {
               	    "username": "test",
                     "password": "test",
@@ -102,6 +103,9 @@
         "method": "post",
         "operation_id": "UploadUserImage",
         "summary": "upload user images",
+        "consumes": [
+            "multipart/form-data"            
+        ],
         "tag": [
             "Account"
         ],

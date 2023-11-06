@@ -91,6 +91,8 @@ paths:
                             Details:
                                 type: string
                                 example: missing username
+            consumes:
+                - multipart/form-data
     /api/user/login:
         post:
             summary: login to server
@@ -102,52 +104,7 @@ paths:
                   name: body
                   required: true
                   schema:
-                    type: object
-                    properties:
-                        password:
-                            type: string
-                            example: test
-                        permission:
-                            type: array
-                            items:
-                                type: string
-                                example:
-                                    - abc
-                                    - djsgdj
-                                    - skdhdkh
-                        tests:
-                            type: array
-                            items:
-                                type: object
-                                properties:
-                                    password:
-                                        type: string
-                                        example: test password 2
-                                    username:
-                                        type: string
-                                        example: test 2
-                        user_info:
-                            type: object
-                            properties:
-                                age:
-                                    type: integer
-                                    example: 23
-                                full_name:
-                                    type: string
-                                    example: thong quoc bang
-                                position:
-                                    type: array
-                                    items:
-                                        type: integer
-                                        example:
-                                            - 1
-                                            - 2
-                                            - 3
-                                            - 4
-                                            - 5
-                        username:
-                            type: string
-                            example: test
+                    $ref: '#/definitions/LoginRequest'
             responses:
                 "200":
                     description: OK
@@ -183,3 +140,51 @@ paths:
                             Details:
                                 type: string
                                 example: missing id
+definitions:
+    LoginRequest:
+        type: object
+        properties:
+            password:
+                type: string
+                example: test
+            permission:
+                type: array
+                items:
+                    type: string
+                    example:
+                        - abc
+                        - djsgdj
+                        - skdhdkh
+            tests:
+                type: array
+                items:
+                    type: object
+                    properties:
+                        password:
+                            type: string
+                            example: test password 2
+                        username:
+                            type: string
+                            example: test 2
+            user_info:
+                type: object
+                properties:
+                    age:
+                        type: integer
+                        example: 23
+                    full_name:
+                        type: string
+                        example: thong quoc bang
+                    position:
+                        type: array
+                        items:
+                            type: integer
+                            example:
+                                - 1
+                                - 2
+                                - 3
+                                - 4
+                                - 5
+            username:
+                type: string
+                example: test
