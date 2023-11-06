@@ -22,7 +22,7 @@ func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 					Consumes:    path.Consumes,
 					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  parseParameterSchema(path.Request, t),
+					Parameters:  parseParameterSchema(path.Request, t, path.OperationID),
 					Responses:   parseResponseSchema(path.Response),
 				},
 			}
@@ -33,7 +33,7 @@ func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 					Consumes:    path.Consumes,
 					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  parseParameterSchema(path.Request, t),
+					Parameters:  parseParameterSchema(path.Request, t, path.OperationID),
 					Responses:   parseResponseSchema(path.Response),
 				},
 			}
@@ -44,7 +44,7 @@ func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 					Consumes:    path.Consumes,
 					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  parseParameterSchema(path.Request, t),
+					Parameters:  parseParameterSchema(path.Request, t, path.OperationID),
 					Responses:   parseResponseSchema(path.Response),
 				},
 			}
@@ -55,7 +55,7 @@ func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 					Consumes:    path.Consumes,
 					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  parseParameterSchema(path.Request, t),
+					Parameters:  parseParameterSchema(path.Request, t, path.OperationID),
 					Responses:   parseResponseSchema(path.Response),
 				},
 			}
@@ -66,7 +66,7 @@ func SetUpPaths(paths models.Paths, t *openapi2.T) error {
 					Consumes:    path.Consumes,
 					OperationID: path.OperationID,
 					Tags:        path.Tag,
-					Parameters:  parseParameterSchema(path.Request, t),
+					Parameters:  parseParameterSchema(path.Request, t, path.OperationID),
 					Responses:   parseResponseSchema(path.Response),
 				},
 			}
@@ -94,7 +94,7 @@ func parseResponseSchema(response []models.Response) map[string]*openapi2.Respon
 	return result
 }
 
-func parseParameterSchema(request []models.Request, t *openapi2.T) openapi2.Parameters {
+func parseParameterSchema(request []models.Request, t *openapi2.T, operationID string) openapi2.Parameters {
 	result := make(openapi2.Parameters, len(request))
 
 	for i, r := range request {
@@ -107,7 +107,7 @@ func parseParameterSchema(request []models.Request, t *openapi2.T) openapi2.Para
 		if r.In == "body" {
 			// move schema to definitions
 			if r.IsToModel {
-				definitionKey := fmt.Sprintf("%sRequest", "Login")
+				definitionKey := fmt.Sprintf("%sRequest", operationID)
 				t.Definitions = map[string]*openapi3.SchemaRef{
 					definitionKey: {
 						Value: parseSchema(r.Schema),
