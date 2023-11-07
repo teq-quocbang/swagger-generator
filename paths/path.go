@@ -141,7 +141,7 @@ func parseSchema(schema interface{}) *openapi3.Schema {
 		// this is special case
 		// with slice case the only check first element type all remaining type is same
 		value := reflect.ValueOf(schema).Index(1)
-		types := getType(value.Elem().Type())
+		types := toSwaggerType(value.Elem().Type())
 
 		switch types {
 		case "slice":
@@ -187,7 +187,7 @@ func parseSchema(schema interface{}) *openapi3.Schema {
 			// 	 type: "string"
 			// 	 example: "abc"
 			// 	 description: ""
-			types := getType(values.Elem().Type())
+			types := toSwaggerType(values.Elem().Type())
 			if types == "object" || types == "slice" { // with map or slice
 				switch types {
 				case "object": // golang type is map
@@ -223,7 +223,7 @@ func parseSchema(schema interface{}) *openapi3.Schema {
 	return result
 }
 
-func getType(r reflect.Type) string {
+func toSwaggerType(r reflect.Type) string {
 	switch r.Kind() {
 	case reflect.String:
 		return "string"
@@ -234,9 +234,11 @@ func getType(r reflect.Type) string {
 		reflect.Int64, reflect.Uint, reflect.Uint8,
 		reflect.Uint16, reflect.Uint32,
 		reflect.Uint64, reflect.Float64:
-		return "integer"
+		return "number"
 	case reflect.Map:
 		return "object"
+	case reflect.Bool:
+		return "boolean"
 	default:
 		return ""
 	}
